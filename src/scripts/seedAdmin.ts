@@ -5,10 +5,10 @@ async function seedAdmin() {
   try {
     console.log("***** Admin Seeding Started....");
     const adminData = {
-      name: "Admin2 Saheb",
-      email: "admin2@admin.com",
+      name: "Admin",
+      email: "muhammadsefat@gmail.com",
       role: UserRole.ADMIN,
-      password: "admin1234",
+      password: "sefat55",
     };
     console.log("***** Checking Admin Exist or not");
     // check user exist on db or not
@@ -23,7 +23,7 @@ async function seedAdmin() {
     }
 
     const signUpAdmin = await fetch(
-      "http://localhost:3000/api/auth/sign-up/email",
+      "http://localhost:5000/api/auth/sign-up/email",
       {
         method: "POST",
         headers: {

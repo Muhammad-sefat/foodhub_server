@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { auth as betterAuth } from "../lib/auth";
+import { prisma } from "../lib/prisma";
 
 export enum UserRole {
-  USER = "USER",
+  CUSTOMER = "CUSTOMER",
+  PROVIDER = "PROVIDER",
   ADMIN = "ADMIN",
 }
 
@@ -23,40 +25,38 @@ declare global {
 const auth = (...roles: UserRole[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // get user session
       const session = await betterAuth.api.getSession({
         headers: req.headers as any,
       });
 
       if (!session) {
-        return res.status(401).json({
-          success: false,
-          message: "You are not authorized!",
-        });
+        return res.status(401).json({ message: "Unauthorized" });
       }
 
-      if (!session.user.emailVerified) {
-        return res.status(403).json({
-          success: false,
-          message: "Email verification required. Please verfiy your email!",
-        });
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+      });
+
+      if (!user) {
+        return res.status(401).json({ message: "User not found" });
       }
 
+      if (!user.emailVerified) {
+        return res.status(403).json({ message: "Email not verified" });
+      }
+
+      if (roles.length && !roles.includes(user.role as UserRole)) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      // ✅ SINGLE SOURCE OF TRUTH
       req.user = {
-        id: session.user.id,
-        email: session.user.email,
-        name: session.user.name,
-        role: session.user.role?.toLocaleUpperCase() as string,
-        emailVerified: session.user.emailVerified,
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        emailVerified: user.emailVerified,
       };
-
-      if (roles.length && !roles.includes(req.user.role as UserRole)) {
-        return res.status(403).json({
-          success: false,
-          message:
-            "Forbidden! You don't have permission to access this resources!",
-        });
-      }
 
       next();
     } catch (err) {
