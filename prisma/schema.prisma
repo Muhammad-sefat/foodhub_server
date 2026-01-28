@@ -13,109 +13,187 @@ datasource db {
   provider = "postgresql"
 }
 
-
 // providerProfile 
-// model ProviderProfile {
-//   id          String @id @default(uuid())
-//   userId      String @unique
-//   restaurant  String
-//   address     String
 
-//   user   User  @relation(fields: [userId], references: [id])
-//   meals  Meal[]
-//   orders Order[] @relation("ProviderOrders")
-// }
+model ProviderProfile {
+  id         String @id @default(uuid())
+  userId     String @unique
+  restaurant String
+  address    String
+
+  user   User    @relation(fields: [userId], references: [id])
+  meals  Meal[]
+  orders Order[] @relation("ProviderOrders")
+}
 
 // category
+
 model Category {
-  id    String @id @default(uuid())
-  name  String @unique
+  id   String @id @default(uuid())
+  name String @unique
 
-  // meals Meal[]
+  meals Meal[]
 }
+
 // meal
-// model Meal {
-//   id          String  @id @default(uuid())
-//   title       String
-//   description String
-//   price       Float
-//   imageUrl    String?
 
-//   providerId  String
-//   categoryId  String
+model Meal {
+  id          String  @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  imageUrl    String?
 
-//   provider ProviderProfile @relation(fields: [providerId], references: [id])
-//   category Category        @relation(fields: [categoryId], references: [id])
+  providerId String
+  categoryId String
 
-//   orderItems OrderItem[]
-//   reviews    Review[]
+  provider ProviderProfile @relation(fields: [providerId], references: [id])
+  category Category        @relation(fields: [categoryId], references: [id])
 
-//   createdAt DateTime @default(now())
-// }
+  orderItems OrderItem[]
+  reviews    Review[]
+
+  createdAt DateTime @default(now())
+}
+
 // order
-// model Order {
-//   id          String @id @default(uuid())
-//   customerId  String
-//   providerId  String
 
-//   status      OrderStatus @default(PLACED)
-//   address     String
-//   totalAmount Float
+model Order {
+  id         String @id @default(uuid())
+  customerId String
+  providerId String
 
-//   customer User            @relation("CustomerOrders", fields: [customerId], references: [id])
-//   provider ProviderProfile @relation("ProviderOrders", fields: [providerId], references: [id])
+  status      OrderStatus @default(PLACED)
+  address     String
+  totalAmount Float
 
-//   items OrderItem[]
+  customer User            @relation("CustomerOrders", fields: [customerId], references: [id])
+  provider ProviderProfile @relation("ProviderOrders", fields: [providerId], references: [id])
 
-//   createdAt DateTime @default(now())
-// }
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+}
 
 // orderItem
-// model OrderItem {
-//   id      String @id @default(uuid())
-//   orderId String
-//   mealId  String
-//   quantity Int
-//   price    Float
 
-//   order Order @relation(fields: [orderId], references: [id])
-//   meal  Meal  @relation(fields: [mealId], references: [id])
-// }
+model OrderItem {
+  id       String @id @default(uuid())
+  orderId  String
+  mealId   String
+  quantity Int
+  price    Float
+
+  order Order @relation(fields: [orderId], references: [id])
+  meal  Meal  @relation(fields: [mealId], references: [id])
+}
+
 // review
-// model Review {
-//   id        String @id @default(uuid())
-//   rating    Int
-//   comment   String?
 
-//   mealId    String
-//   userId    String
+model Review {
+  id      String  @id @default(uuid())
+  rating  Int
+  comment String?
 
-//   meal Meal @relation(fields: [mealId], references: [id])
-//   user User @relation("UserReviews", fields: [userId], references: [id])
+  mealId String
+  userId String
 
-//   createdAt DateTime @default(now())
-// }
+  meal Meal @relation(fields: [mealId], references: [id])
+  user User @relation("UserReviews", fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id            String   @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Better Auth
+  sessions Session[]
+  accounts Account[]
+
+  // 🔥 YOUR BUSINESS FIELDS
+  role   Role       @default(CUSTOMER)
+  status UserStatus @default(ACTIVE)
+
+  // 🔥 YOUR BUSINESS RELATIONS
+  providerProfile ProviderProfile?
+  orders          Order[]  @relation("CustomerOrders")
+  reviews         Review[] @relation("UserReviews")
+
+  @@unique([email])
+  @@map("user")
+}
 
 
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
 
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
-// enum Role {
-//   CUSTOMER
-//   PROVIDER
-//   ADMIN
-// }
+  @@index([userId])
+  @@map("account")
+}
 
-// enum UserStatus {
-//   ACTIVE
-//   SUSPENDED
-// }
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-// enum OrderStatus {
-//   PLACED
-//   PREPARING
-//   READY
-//   DELIVERED
-//   CANCELLED
-// }
+  @@index([identifier])
+  @@map("verification")
+}
 
+enum Role {
+  CUSTOMER
+  PROVIDER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum OrderStatus {
+  PLACED
+  PREPARING
+  READY
+  DELIVERED
+  CANCELLED
+}
