@@ -14,7 +14,6 @@ datasource db {
 }
 
 // providerProfile 
-
 model ProviderProfile {
   id         String @id @default(uuid())
   userId     String @unique
@@ -27,7 +26,6 @@ model ProviderProfile {
 }
 
 // category
-
 model Category {
   id   String @id @default(uuid())
   name String @unique
@@ -36,7 +34,6 @@ model Category {
 }
 
 // meal
-
 model Meal {
   id          String  @id @default(uuid())
   title       String
@@ -57,7 +54,6 @@ model Meal {
 }
 
 // order
-
 model Order {
   id         String @id @default(uuid())
   customerId String
@@ -76,7 +72,6 @@ model Order {
 }
 
 // orderItem
-
 model OrderItem {
   id       String @id @default(uuid())
   orderId  String
@@ -89,7 +84,6 @@ model OrderItem {
 }
 
 // review
-
 model Review {
   id      String  @id @default(uuid())
   rating  Int
@@ -104,6 +98,7 @@ model Review {
   createdAt DateTime @default(now())
 }
 
+// user
 model User {
   id            String   @id
   name          String
@@ -117,11 +112,11 @@ model User {
   sessions Session[]
   accounts Account[]
 
-  // 🔥 YOUR BUSINESS FIELDS
+  // BUSINESS FIELDS
   role   Role       @default(CUSTOMER)
   status UserStatus @default(ACTIVE)
 
-  // 🔥 YOUR BUSINESS RELATIONS
+  // BUSINESS RELATIONS
   providerProfile ProviderProfile?
   orders          Order[]  @relation("CustomerOrders")
   reviews         Review[] @relation("UserReviews")
