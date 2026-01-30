@@ -6,6 +6,7 @@ import { categoryRoutes } from "./modules/category/category.route";
 import { mealRoutes } from "./modules/meal/meal.route";
 import { providerRoutes } from "./modules/provider/provider.route";
 import { orderRoutes } from "./modules/order/order.route";
+import { reviewRoutes } from "./modules/review/review.route";
 
 const app: Application = express();
 
@@ -18,6 +19,7 @@ app.use("/api", categoryRoutes);
 app.use("/api", mealRoutes);
 app.use("/api", providerRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 app.get("/", (_req, res) => {
   res.send("FoodHub API is running 🚀");
