@@ -67,8 +67,19 @@ const updateOrderStatus = async (
   providerId: string,
   status: "PREPARING" | "READY" | "DELIVERED",
 ) => {
-  return prisma.order.updateMany({
-    where: { id: orderId, providerId },
+  const order = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+      providerId,
+    },
+  });
+
+  if (!order) {
+    throw new Error("ORDER_NOT_FOUND");
+  }
+
+  return prisma.order.update({
+    where: { id: orderId },
     data: { status },
   });
 };
