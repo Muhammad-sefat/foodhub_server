@@ -67,6 +67,7 @@ const createOrder = async (
   });
 };
 
+// Get customer orders
 const getCustomerOrders = async (customerId: string) => {
   return prisma.order.findMany({
     where: { customerId },
@@ -77,6 +78,8 @@ const getCustomerOrders = async (customerId: string) => {
     orderBy: { createdAt: "desc" },
   });
 };
+
+// Get order by id
 const getOrderById = async (customerId: string, orderId: string) => {
   const order = await prisma.order.findFirst({
     where: {
