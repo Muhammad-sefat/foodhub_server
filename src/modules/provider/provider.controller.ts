@@ -84,9 +84,9 @@ const updateOrderStatus = async (req: Request, res: Response) => {
     status,
   );
 
-  if (result.count === 0) {
-    return res.status(403).json({ message: "Not allowed" });
-  }
+  // if (result.count === 0) {
+  //   return res.status(403).json({ message: "Not allowed" });
+  // }
 
   res.json({ success: true });
 };
