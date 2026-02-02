@@ -10,4 +10,18 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  events: {
+    async afterUserCreated(user: any, context: any) {
+      const { role } = context.body as {
+        role?: "CUSTOMER" | "PROVIDER";
+      };
+
+      const finalRole = role === "PROVIDER" ? "PROVIDER" : "CUSTOMER";
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { role: finalRole },
+      });
+    },
+  },
 });
