@@ -6,22 +6,25 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-  trustedOrigins: ["http://localhost:3000"],
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://foodhub-client.vercel.app", // if deployed later
+  ],
+
   emailAndPassword: {
     enabled: true,
   },
-  events: {
-    async afterUserCreated(user: any, context: any) {
-      const { role } = context.body as {
-        role?: "CUSTOMER" | "PROVIDER";
-      };
 
-      const finalRole = role === "PROVIDER" ? "PROVIDER" : "CUSTOMER";
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { role: finalRole },
-      });
+  // 🔑 COOKIE CONFIG (THIS FIXES YOUR ISSUE)
+  cookies: {
+    sessionToken: {
+      name: "foodhub_session",
+      options: {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        path: "/",
+      },
     },
   },
 });
