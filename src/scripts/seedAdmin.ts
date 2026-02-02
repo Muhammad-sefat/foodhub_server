@@ -22,12 +22,12 @@ async function seedAdmin() {
     }
 
     const response = await fetch(
-      "http://localhost:5000/api/auth/sign-up/email",
+      "https://foodhub-server-3.onrender.com/api/auth/sign-up/email",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Origin: "http://localhost:5000",
+          Origin: "https://foodhub-server-3.onrender.com",
         },
         body: JSON.stringify(adminData),
       },
