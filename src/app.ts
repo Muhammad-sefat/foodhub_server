@@ -10,6 +10,7 @@ import { reviewRoutes } from "./modules/review/review.route";
 import { adminRoutes } from "./modules/admin/admin.route";
 
 const app: Application = express();
+app.set("trust proxy", 1);
 
 app.use(
   cors({
