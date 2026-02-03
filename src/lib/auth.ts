@@ -13,18 +13,6 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
-  },
-
-  // 🔑 COOKIE CONFIG (THIS FIXES YOUR ISSUE)
-  cookies: {
-    sessionToken: {
-      name: "foodhub_session",
-      options: {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        path: "/",
-      },
-    },
+    autoSignIn: false,
   },
 });
