@@ -15,4 +15,14 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: false,
   },
+  cookies: {
+    sessionToken: {
+      options: {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        path: "/",
+      },
+    },
+  },
 });
