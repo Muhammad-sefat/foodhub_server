@@ -6,23 +6,39 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
-  trustedOrigins: [
-    "http://localhost:3000",
-    "https://foodhub-client.vercel.app",
-  ],
+  trustedOrigins: ["http://localhost:3000"],
 
-  emailAndPassword: {
-    enabled: true,
-    autoSignIn: false,
-  },
-  cookies: {
-    sessionToken: {
-      options: {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        path: "/",
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        defaultValue: "CUSTOMER",
+        required: false,
+      },
+      phone: {
+        type: "string",
+        required: false,
+      },
+      status: {
+        type: "string",
+        defaultValue: "active",
+        required: false,
       },
     },
   },
+  emailAndPassword: {
+    enabled: true,
+    autoSignIn: false,
+    requireEmailVerification: true,
+  },
+  // cookies: {
+  //   sessionToken: {
+  //     options: {
+  //       httpOnly: true,
+  //       secure: true,
+  //       sameSite: "none",
+  //       path: "/",
+  //     },
+  //   },
+  // },
 });
