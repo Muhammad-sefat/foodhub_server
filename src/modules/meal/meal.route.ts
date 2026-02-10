@@ -15,6 +15,11 @@ router.post(
   MealController.createMeal,
 );
 
+router.get(
+  "/provider/meals",
+  auth(UserRole.PROVIDER),
+  MealController.getMyMeals,
+);
 router.put(
   "/provider/meals/:id",
   auth(UserRole.PROVIDER),

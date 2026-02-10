@@ -8,6 +8,7 @@ import { providerRoutes } from "./modules/provider/provider.route";
 import { orderRoutes } from "./modules/order/order.route";
 import { reviewRoutes } from "./modules/review/review.route";
 import { adminRoutes } from "./modules/admin/admin.route";
+import { authRoutes } from "./modules/auth/auth.route";
 
 const app: Application = express();
 app.set("trust proxy", 1);
@@ -20,6 +21,7 @@ app.use(
 );
 app.use(express.json());
 
+app.use("/api", authRoutes);
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use("/api", categoryRoutes);

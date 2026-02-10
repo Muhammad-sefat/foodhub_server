@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { ProviderService } from "./provider.service";
+import { prisma } from "../../lib/prisma";
 
 // create profile
 const createProfile = async (req: Request, res: Response) => {
@@ -91,6 +92,34 @@ const updateOrderStatus = async (req: Request, res: Response) => {
   res.json({ success: true });
 };
 
+// role update
+const becomeProvider = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user!.id;
+
+    if (req.user!.role === "PROVIDER") {
+      return res.status(400).json({
+        message: "Already a provider",
+      });
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { role: "PROVIDER" },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Role updated to PROVIDER",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update role",
+    });
+  }
+};
+
 export const ProviderController = {
   createProfile,
   getMyProfile,
@@ -98,4 +127,5 @@ export const ProviderController = {
   getProvider,
   getOrders,
   updateOrderStatus,
+  becomeProvider,
 };

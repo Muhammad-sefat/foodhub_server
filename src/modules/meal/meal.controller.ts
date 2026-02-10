@@ -35,7 +35,7 @@ const createMeal = async (req: Request, res: Response) => {
   }
 };
 
-// get all meals (optional category filter)
+// get all meals
 const getMeals = async (req: Request, res: Response) => {
   try {
     const meals = await MealService.getMeals(
@@ -87,10 +87,30 @@ const deleteMeal = async (req: Request, res: Response) => {
   res.json({ success: true });
 };
 
+// get meals for logged-in provider only
+const getMyMeals = async (req: Request, res: Response) => {
+  try {
+    const providerProfile = await prisma.providerProfile.findUnique({
+      where: { userId: req.user!.id },
+    });
+
+    if (!providerProfile) {
+      return res.status(403).json({ message: "Provider profile not found" });
+    }
+
+    const meals = await MealService.getMealsByProvider(providerProfile.id);
+
+    res.json({ success: true, data: meals });
+  } catch {
+    res.status(500).json({ message: "Failed to fetch provider meals" });
+  }
+};
+
 export const MealController = {
   createMeal,
   getMeals,
   getMeal,
   updateMeal,
   deleteMeal,
+  getMyMeals,
 };

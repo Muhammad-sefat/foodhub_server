@@ -48,10 +48,21 @@ const deleteMeal = async (mealId: string, providerId: string) => {
   });
 };
 
+const getMealsByProvider = async (providerId: string) => {
+  return prisma.meal.findMany({
+    where: { providerId },
+    include: {
+      category: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+};
+
 export const MealService = {
   createMeal,
   getMeals,
   getMealById,
   updateMeal,
   deleteMeal,
+  getMealsByProvider,
 };

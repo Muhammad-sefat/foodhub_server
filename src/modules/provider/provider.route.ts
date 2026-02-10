@@ -7,6 +7,12 @@ const router = Router();
 // PUBLIC
 router.get("/providers", ProviderController.getProviders);
 router.get("/providers/:id", ProviderController.getProvider);
+// CUSTOMER → PROVIDER
+router.post(
+  "/provider/become",
+  auth(UserRole.CUSTOMER),
+  ProviderController.becomeProvider,
+);
 
 // PROVIDER
 router.post(

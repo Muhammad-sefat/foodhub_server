@@ -44,7 +44,16 @@ const getProviderById = async (id: string) => {
   return prisma.providerProfile.findUnique({
     where: { id },
     include: {
-      meals: true,
+      meals: {
+        include: {
+          category: {
+            select: { name: true },
+          },
+          provider: {
+            select: { restaurant: true },
+          },
+        },
+      },
     },
   });
 };
