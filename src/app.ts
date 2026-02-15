@@ -15,7 +15,10 @@ app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: process.env.APP_URL || "http://localhost:3000",
+    origin:
+      process.env.APP_URL ||
+      "http://localhost:3000" ||
+      "https://foodhub-client-one.vercel.app",
     credentials: true,
   }),
 );
