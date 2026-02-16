@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
-    "seed:admin": "npx tsx src/scripts/seedAdmin.ts"
+    "seed:admin": "npx tsx src/scripts/seedAdmin.ts",
+    "build": "npx prisma migrate deploy && tsc"
   },
   "keywords": [],
   "author": "",
